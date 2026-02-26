@@ -1,0 +1,16 @@
+version: '3.8'
+
+services:
+  b2builder-api:
+    build: .
+    container_name: b2builder_service
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_NAME=B2Builder_SaaS
+      - [cite_start]API_KEY=twoj_tajny_klucz_2026  # Klucz do nagłówka X-API-KEY 
+      - DEBUG=false
+    volumes:
+      - [cite_start]./templates:/app/templates  # Mapowanie folderu z szablonami Jinja2 [cite: 15]
+      - ./output:/app/output        # Miejsce na testowe zapisy PDF
+    restart: always
