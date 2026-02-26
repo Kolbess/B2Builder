@@ -1,0 +1,26 @@
+# --- Podstawa API ---
+# FastAPI to serce naszego systemu, obsługujące routing i asynchroniczność.
+fastapi>=0.115.0
+
+# Uvicorn jako wydajny serwer ASGI do obsługi ruchu produkcyjnego.
+uvicorn[standard]>=0.30.0
+
+# --- Walidacja i Dane ---
+# Pydantic v2 zapewnia rygorystyczną walidację schematów JSON przed renderowaniem[cite: 9, 22].
+pydantic>=2.7.0
+# Obsługa zmiennych środowiskowych (np. dla kluczy API).
+pydantic-settings>=2.2.0
+
+# --- Silnik Renderujący ---
+# Jinja2 do bezpiecznego renderowania dynamicznych danych w strukturze HTML[cite: 9, 15].
+Jinja2>=3.1.0
+
+# WeasyPrint do konwersji ostylowanego HTML/CSS do formatu PDF.
+# Uwaga: Wymaga bibliotek systemowych (pango, cairo, gobject).
+weasyprint>=62.0
+
+# --- Narzędzia pomocnicze ---
+# Do obsługi zapytań multipart/form-data, jeśli zajdzie potrzeba przesyłania plików.
+python-multipart>=0.0.9
+# Standardowa biblioteka do obsługi typów e-mail/dat w Pydantic.
+email-validator>=2.1.0
