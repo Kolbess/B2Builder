@@ -37,8 +37,10 @@
    - The `.env` file is already ignored by Git (see `.gitignore`).
 
 > **Note:** only the `POST /generate` endpoint accepts POST requests; a GET
-> returns "Method Not Allowed". Visiting the root path (`/`) will now redirect
-> to `/docs` so you can explore the API interactively.
+> returns "Method Not Allowed". The response is a PDF file so the Swagger UI will
+> prompt you to download it instead of showing raw text. Visiting the root path
+> (`/`) will now redirect to `/docs` so you can explore the API interactively.
+
 
 2. **Run tests locally**
    ```bash
@@ -75,8 +77,7 @@
    ```powershell
    # Windows alternative using PowerShell variable expansion (works regardless of
    # compose version):
-   $key = (Get-Content .env | Select-String '^API_KEY=').Line.Split('=')[1]
-   docker compose run --rm -e API_KEY=$key b2builder-api pytest -q
+   docker compose run --rm b2builder-api pytest -q
    ```
    ```yaml
    # example docker-compose snippet for mounting .env into container

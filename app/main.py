@@ -17,8 +17,14 @@ def root_redirect():
     return RedirectResponse(url="/docs")
 
 from fastapi import Depends
+from fastapi.responses import StreamingResponse
+import io
+
 from app.core.security import get_api_key
+from app.services.pdf_renderer import render_pdf
 
 @app.post("/generate", dependencies=[Depends(get_api_key)])
 def generate_pdf(request: GenerateRequest):
-    return {"status": "success", "template_id": request.template_id, "message": "Authenticated"}
+    """Generate a PDF from a template and return it as a binary stream."""
+    pdf_bytes = render_pdf(request.template_id, request.data)
+    return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")

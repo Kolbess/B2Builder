@@ -20,11 +20,14 @@ def test_generate_success():
     response = client.post(
         "/generate",
         headers={"X-API-KEY": VALID_API_KEY},
-        json={"template_id": "invoice_standard", "data": {"key": "value"}}
+        json={"template_id": "invoice_standard", "data": {"title": "Hi", "content": "there"}}
     )
     assert response.status_code == 200
-    assert response.json()["status"] == "success"
-    assert response.json()["template_id"] == "invoice_standard"
+    # should be a PDF stream
+    assert response.headers.get("content-type") == "application/pdf"
+    # ensure download header is present
+    assert "attachment" in response.headers.get("content-disposition", "")
+    assert response.content.startswith(b"%PDF-")
 
 
 def test_generate_missing_template_id():
