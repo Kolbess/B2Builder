@@ -23,8 +23,20 @@ import io
 from app.core.security import get_api_key
 from app.services.pdf_renderer import render_pdf
 
-@app.post("/generate", dependencies=[Depends(get_api_key)])
+@app.post(
+    "/generate",
+    dependencies=[Depends(get_api_key)],
+    responses={200: {"content": {"application/pdf": {}}}},
+)
 def generate_pdf(request: GenerateRequest):
-    """Generate a PDF from a template and return it as a binary stream."""
+    """Generate a PDF from a template and return it as a binary stream.
+
+    The response includes a ``Content-Disposition`` header so that browsers
+    and the Swagger UI offer a download rather than trying to render the raw
+    bytes as text.
+    """
     pdf_bytes = render_pdf(request.template_id, request.data)
-    return StreamingResponse(io.BytesIO(pdf_bytes), media_type="application/pdf")
+    headers = {"Content-Disposition": "attachment; filename=generated.pdf"}
+    return StreamingResponse(
+        io.BytesIO(pdf_bytes), media_type="application/pdf", headers=headers
+    )

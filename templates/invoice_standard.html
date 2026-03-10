@@ -3,8 +3,12 @@
 <head>
     <meta charset="utf-8" />
     <title>{{ title or "Invoice" }}</title>
+    <style>{{ assets_css | default('', true) }}</style>
 </head>
 <body>
+    {% if assets and assets.logo %}
+      <img src="{{ assets.logo }}" alt="logo" style="max-height:100px;" />
+    {% endif %}
     <h1>{{ title or "Invoice" }}</h1>
     <p>{{ content or "No content" }}</p>
 </body>

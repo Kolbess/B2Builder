@@ -41,7 +41,9 @@ def test_generate_with_valid_api_key():
     response = client.post(
         "/generate",
         headers={"X-API-KEY": VALID_API_KEY},
-        json={"template_id": "invoice_standard", "data": {"key": "value"}}
+        json={"template_id": "invoice_standard", "data": {"title": "Test", "content": "Hello"}}
     )
     assert response.status_code == 200
-    assert response.json() == {"status": "success", "template_id": "invoice_standard", "message": "Authenticated"}
+    # should return a PDF stream
+    assert response.headers.get("content-type") == "application/pdf"
+    assert response.content.startswith(b"%PDF-")  # PDF signature
