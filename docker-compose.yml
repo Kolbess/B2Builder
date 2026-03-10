@@ -6,10 +6,12 @@ services:
     container_name: b2builder_service
     ports:
       - "8000:8000"
+    # load environment from local .env; API_KEY in the file will be applied at runtime
+    env_file:
+      - .env
     environment:
       - APP_NAME=B2Builder_SaaS
-      - API_KEY=twoj_tajny_klucz_2026 # Klucz do nagłówka X-API-KEY 
-      - DEBUG=false
+      # DEBUG may still be overridden here or in .env
     volumes:
       - ./templates:/app/templates # Mapowanie folderu z szablonami Jinja2 [cite: 15]
       - ./output:/app/output # Miejsce na testowe zapisy PDF

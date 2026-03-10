@@ -52,7 +52,9 @@
    > in `tests/test_auth.py`.
 
 3. **Launching the service**
-   - **Docker**: `docker compose up --build` (listens on port 8000).
+   - **Docker**: `docker compose up --build` (listens on port 8000). The compose
+     file now reads your `.env` automatically via `env_file`, so put your
+     `API_KEY` there instead of editing the YAML.
    - **Direct**: `uvicorn app.main:app --reload` for fast development.
 
 4. **Running tests in Docker (clean environment)**
