@@ -91,6 +91,37 @@
    `--rm` ensures the test container is discarded after the run.
    You can set additional environment variables as needed.
 
+---
+
+### 📁 Template assets
+
+Templates may include logos or custom fonts by passing an `assets` object in
+the payload sent to `POST /generate`:
+
+```json
+{
+  "template_id": "invoice_standard",
+  "data": {
+    "title": "Hello",
+    "content": "World",
+    "assets": {
+      "logo": "data:image/png;base64,<base64-data>",
+      "fonts": {
+        "MyFont": "<base64-ttf-or-woff>"
+      }
+    }
+  }
+}
+```
+
+* **Logo** should be a data‑URI with image mime type (PNG, JPEG etc.). The
+  renderer will inject it into the HTML at `{{ assets.logo }}`.
+* **Fonts** must be base64‑encoded font files (TTF/WOFF/etc). They are turned
+  into `@font-face` rules automatically so they can be used by name in the
+  template CSS.
+
+These assets are purely optional; sending an empty object (`{}`) has no effect.
+
 4. **Additional secrets**
    - Add any other API keys or config values to `.env` and access via
      `os.getenv()` in your code.
