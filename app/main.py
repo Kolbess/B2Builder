@@ -24,7 +24,7 @@ from app.core.security import get_api_key
 from app.services.pdf_renderer import render_pdf
 
 @app.post(
-    "/generate",
+    "/v1/generate",
     dependencies=[Depends(get_api_key)],
     responses={200: {"content": {"application/pdf": {}}}},
 )

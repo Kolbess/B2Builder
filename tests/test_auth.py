@@ -22,7 +22,7 @@ def test_health_check():
 
 def test_generate_without_api_key():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         json={"template_id": "invoice_standard", "data": {"key": "value"}}
     )
     assert response.status_code == 401
@@ -30,7 +30,7 @@ def test_generate_without_api_key():
 
 def test_generate_with_invalid_api_key():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": "invalid-key"},
         json={"template_id": "invoice_standard", "data": {"key": "value"}}
     )
@@ -39,7 +39,7 @@ def test_generate_with_invalid_api_key():
 
 def test_generate_with_valid_api_key():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": VALID_API_KEY},
         json={"template_id": "invoice_standard", "data": {"title": "Test", "content": "Hello"}}
     )

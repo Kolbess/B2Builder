@@ -18,7 +18,7 @@ client = TestClient(app)
 
 def test_generate_success():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": VALID_API_KEY},
         json={"template_id": "invoice_standard", "data": {"title": "Hi", "content": "there"}}
     )
@@ -32,7 +32,7 @@ def test_generate_success():
 
 def test_generate_missing_template_id():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": VALID_API_KEY},
         json={"data": {"key": "value"}}
     )
@@ -43,7 +43,7 @@ def test_generate_missing_template_id():
 
 def test_generate_missing_data():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": VALID_API_KEY},
         json={"template_id": "invoice_standard"}
     )
@@ -54,7 +54,7 @@ def test_generate_missing_data():
 
 def test_generate_invalid_data_type():
     response = client.post(
-        "/generate",
+        "/v1/generate",
         headers={"X-API-KEY": VALID_API_KEY},
         json={"template_id": "invoice_standard", "data": "not a dict"}
     )
