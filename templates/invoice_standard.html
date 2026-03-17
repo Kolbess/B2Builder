@@ -1,15 +1,46 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>{{ title or "Invoice" }}</title>
+    <title>{{ invoice_number or "Invoice" }}</title>
     <style>{{ assets_css | default('', true) }}</style>
 </head>
 <body>
     {% if assets and assets.logo %}
       <img src="{{ assets.logo }}" alt="logo" style="max-height:100px;" />
     {% endif %}
-    <h1>{{ title or "Invoice" }}</h1>
-    <p>{{ content or "No content" }}</p>
+
+    <h1>Faktura: {{ invoice_number or "N/A" }}</h1>
+
+    <h2>Dane klienta</h2>
+    <p><strong>Nazwa:</strong> {{ customer.name if customer else "-" }}</p>
+    <p><strong>Adres:</strong> {{ customer.address if customer else "-" }}</p>
+
+    <h2>Pozycje</h2>
+    {% if items %}
+      <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%;">
+        <thead>
+          <tr>
+            <th>Opis</th>
+            <th>Ilość</th>
+            <th>Cena jedn.</th>
+            <th>Razem</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in items %}
+          <tr>
+            <td>{{ item.description or "" }}</td>
+            <td>{{ item.quantity or "" }}</td>
+            <td>{{ item.unit_price or "" }}</td>
+            <td>{{ item.total_price or "" }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p>Brak pozycji.</p>
+    {% endif %}
+
 </body>
 </html>

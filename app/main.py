@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.models import GenerateRequest
+from app.models import GenerateRequest, TemplateSchema
 
 app = FastAPI(
     title="B2Builder API",
@@ -40,3 +40,69 @@ def generate_pdf(request: GenerateRequest):
     return StreamingResponse(
         io.BytesIO(pdf_bytes), media_type="application/pdf", headers=headers
     )
+
+
+@app.get("/v1/templates")
+def get_templates():
+    """
+    Zwraca listę wszystkich dostępnych szablonów dokumentów PDF z przykładowymi żądaniami.
+    """
+    templates = [
+        {
+            "id": "invoice_standard",
+            "name": "Standardowa Faktura",
+            "description": "Szablon dla standardowych faktur z pozycjami i danymi klienta.",
+            "example_request": {
+                "template_id": "invoice_standard",
+                "data": {
+                    "invoice_number": "INV-001",
+                    "customer": {"name": "ABC Corp", "address": "123 Main St"},
+                    "items": [
+                        {
+                            "description": "Product A",
+                            "quantity": 2,
+                            "unit_price": 10.0,
+                            "total_price": 20.0
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "certificate_custom",
+            "name": "Certyfikat Niestandardowy",
+            "description": "Szablon dla certyfikatów z możliwością dostosowania.",
+            "example_request": {
+                "template_id": "certificate_custom",
+                "data": {
+                    "recipient_name": "Jan Kowalski",
+                    "course_title": "Python Advanced",
+                    "completion_date": "2026-03-17",
+                    "issuer_name": "B2Builder Academy",
+                    "certificate_number": "CERT-2026-001"
+                }
+            }
+        },
+        {
+            "id": "report_monthly",
+            "name": "Raport Miesięczny",
+            "description": "Szablon dla miesięcznych raportów biznesowych.",
+            "example_request": {
+                "template_id": "report_monthly",
+                "data": {
+                    "report_title": "Monthly Report March 2026",
+                    "report_month": "2026-03",
+                    "summary": "Summary of business activities",
+                    "metrics": {
+                        "revenue": 15000.0,
+                        "expenses": 12000.0,
+                        "profit": 3000.0
+                    }
+                }
+            }
+        }
+    ]
+
+    examples = [t["example_request"] for t in templates]
+
+    return {"templates": templates, "examples": examples}

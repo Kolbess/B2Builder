@@ -1,3 +1,3 @@
-from .models import GenerateRequest
+from .models import GenerateRequest, TemplateSchema
 
-__all__ = ["GenerateRequest"]
+__all__ = ["GenerateRequest", "TemplateSchema"]
