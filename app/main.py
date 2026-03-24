@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-from app.models import GenerateRequest, TemplateSchema
+from app.models import GenerateRequest, TemplateSchema, TemplatesResponse
 
 app = FastAPI(
     title="B2Builder API",
@@ -27,6 +27,9 @@ from app.services.pdf_renderer import render_pdf
     "/v1/generate",
     dependencies=[Depends(get_api_key)],
     responses={200: {"content": {"application/pdf": {}}}},
+    summary="Generuj dokument PDF",
+    description="Utwórz dokument PDF na podstawie wybranego szablonu i dostarczonych danych. Wybierz szablon z listy dostępnych (GET /v1/templates), przygotuj dane zgodnie z przykładem i wyślij żądanie. Dokument zostanie zwrócony jako plik do pobrania.",
+    tags=["Generowanie PDF"]
 )
 def generate_pdf(request: GenerateRequest):
     """Generate a PDF from a template and return it as a binary stream.
@@ -42,17 +45,21 @@ def generate_pdf(request: GenerateRequest):
     )
 
 
-@app.get("/v1/templates")
+@app.get("/v1/templates",
+          summary="Pobierz dostępne szablony",
+          description="Zwróć listę wszystkich dostępnych szablonów dokumentów PDF wraz z przykładami żądań, które można skopiować i dostosować. Każdy szablon zawiera unikalny identyfikator, nazwę, opis oraz przykładowe dane JSON do użycia w żądaniu POST /v1/generate.",
+          tags=["Szablony"],
+          response_model=TemplatesResponse)
 def get_templates():
     """
     Zwraca listę wszystkich dostępnych szablonów dokumentów PDF z przykładowymi żądaniami.
     """
     templates = [
-        {
-            "id": "invoice_standard",
-            "name": "Standardowa Faktura",
-            "description": "Szablon dla standardowych faktur z pozycjami i danymi klienta.",
-            "example_request": {
+        TemplateSchema(
+            id="invoice_standard",
+            name="Standardowa Faktura",
+            description="Szablon dla standardowych faktur z pozycjami i danymi klienta.",
+            example_request={
                 "template_id": "invoice_standard",
                 "data": {
                     "invoice_number": "INV-001",
@@ -67,12 +74,12 @@ def get_templates():
                     ]
                 }
             }
-        },
-        {
-            "id": "certificate_custom",
-            "name": "Certyfikat Niestandardowy",
-            "description": "Szablon dla certyfikatów z możliwością dostosowania.",
-            "example_request": {
+        ),
+        TemplateSchema(
+            id="certificate_custom",
+            name="Certyfikat Niestandardowy",
+            description="Szablon dla certyfikatów z możliwością dostosowania.",
+            example_request={
                 "template_id": "certificate_custom",
                 "data": {
                     "recipient_name": "Jan Kowalski",
@@ -82,12 +89,12 @@ def get_templates():
                     "certificate_number": "CERT-2026-001"
                 }
             }
-        },
-        {
-            "id": "report_monthly",
-            "name": "Raport Miesięczny",
-            "description": "Szablon dla miesięcznych raportów biznesowych.",
-            "example_request": {
+        ),
+        TemplateSchema(
+            id="report_monthly",
+            name="Raport Miesięczny",
+            description="Szablon dla miesięcznych raportów biznesowych.",
+            example_request={
                 "template_id": "report_monthly",
                 "data": {
                     "report_title": "Monthly Report March 2026",
@@ -100,9 +107,9 @@ def get_templates():
                     }
                 }
             }
-        }
+        )
     ]
 
-    examples = [t["example_request"] for t in templates]
+    examples = [t.example_request for t in templates]
 
-    return {"templates": templates, "examples": examples}
+    return TemplatesResponse(templates=templates, examples=examples)

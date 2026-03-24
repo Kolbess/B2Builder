@@ -41,3 +41,8 @@ class TemplateSchema(BaseModel):
     name: str = Field(description="Przyjazna nazwa szablonu")
     description: str = Field(description="Opis szablonu i jego zastosowania")
     example_request: Dict[str, Any] = Field(description="Przykładowe pełne żądanie JSON do skopiowania i wypełnienia dla tego szablonu")
+
+
+class TemplatesResponse(BaseModel):
+    templates: List[TemplateSchema] = Field(description="Lista dostępnych szablonów")
+    examples: List[Dict[str, Any]] = Field(description="Lista przykładowych żądań JSON dla każdego szablonu")
