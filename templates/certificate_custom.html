@@ -1,19 +1,224 @@
 <!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <meta charset="utf-8" />
-    <title>{{ course_title or "Certificate" }}</title>
-    <style>{{ assets_css | default('', true) }}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certyfikat - {{ course_title or "Kurs" }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Georgia', 'Times New Roman', serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .certificate-container {
+            max-width: 800px;
+            width: 100%;
+            background: white;
+            border: 8px solid #d4af37;
+            border-radius: 15px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header-decoration {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 25px;
+            position: relative;
+        }
+
+        .certificate-content {
+            padding: 60px 40px;
+            text-align: center;
+        }
+
+        .logo-section {
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            max-height: 100px;
+            max-width: 200px;
+        }
+
+        .certificate-title {
+            font-size: 3rem;
+            color: #2c3e50;
+            margin: 30px 0;
+            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+        }
+
+        .certificate-subtitle {
+            font-size: 1.2rem;
+            color: #667eea;
+            margin-bottom: 40px;
+            font-style: italic;
+            font-weight: 600;
+        }
+
+        .main-content {
+            margin: 40px 0;
+        }
+
+        .recipient-name {
+            font-size: 2.5rem;
+            color: #667eea;
+            margin: 20px 0;
+            font-weight: bold;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .achievement-text {
+            font-size: 1.3rem;
+            color: #34495e;
+            margin: 20px 0;
+            line-height: 1.6;
+        }
+
+        .course-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
+            margin: 15px 0;
+            font-weight: 600;
+        }
+
+        .details-section {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .detail-item {
+            text-align: center;
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .detail-label {
+            font-size: 0.9rem;
+            color: #667eea;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .detail-value {
+            font-size: 1.2rem;
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        .signature-section {
+            margin-top: 60px;
+            border-top: 2px solid #667eea;
+            padding-top: 30px;
+        }
+
+        .signature-line {
+            width: 200px;
+            height: 1px;
+            background: #2c3e50;
+            margin: 0 auto 10px;
+        }
+
+        .signature-text {
+            font-size: 1rem;
+            color: #34495e;
+            font-style: italic;
+        }
+
+        .footer-decoration {
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            height: 25px;
+            margin-top: 40px;
+        }
+
+        .certificate-number {
+            position: absolute;
+            bottom: 20px;
+            right: 30px;
+            font-size: 0.8rem;
+            color: #7f8c8d;
+            font-family: 'Courier New', monospace;
+        }
+
+        @media (max-width: 768px) {
+            .certificate-content {
+                padding: 30px 20px;
+            }
+
+            .certificate-title {
+                font-size: 2rem;
+            }
+
+            .recipient-name {
+                font-size: 2rem;
+            }
+
+            .details-section {
+                flex-direction: column;
+                gap: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% if assets and assets.logo %}
-      <img src="{{ assets.logo }}" alt="logo" style="max-height:100px;" />
-    {% endif %}
+    <div class="certificate-container">
+        <div class="header-decoration"></div>
 
-    <h1>{{ course_title or "Certificate" }}</h1>
-    <p><strong>Recipient:</strong> {{ recipient_name or "-" }}</p>
-    <p><strong>Completion date:</strong> {{ completion_date or "-" }}</p>
-    <p><strong>Issuer:</strong> {{ issuer_name or "-" }}</p>
-    <p><strong>Certificate number:</strong> {{ certificate_number or "-" }}</p>
+        <div class="certificate-content">
+            <div class="logo-section">
+                {% if assets and assets.logo %}
+                    <img src="{{ assets.logo }}" alt="Logo instytucji" class="logo">
+                {% endif %}
+            </div>
+
+            <h1 class="certificate-title">Certyfikat</h1>
+            <p class="certificate-subtitle">Za ukończenie kursu</p>
+
+            <div class="main-content">
+                <p class="achievement-text">Niniejszym zaświadcza się, że</p>
+                <h2 class="recipient-name">{{ recipient_name or "Uczeń" }}</h2>
+                <p class="achievement-text">z powodzeniem ukończył kurs</p>
+                <h3 class="course-title">{{ course_title or "Nazwa kursu" }}</h3>
+            </div>
+
+            <div class="details-section">
+                <div class="detail-item">
+                    <div class="detail-label">Data ukończenia</div>
+                    <div class="detail-value">{{ completion_date or "Nie podano" }}</div>
+                </div>
+                <div class="detail-item">
+                    <div class="detail-label">Wydawca</div>
+                    <div class="detail-value">{{ issuer_name or "Instytucja" }}</div>
+                </div>
+            </div>
+
+            <div class="signature-section">
+                <div class="signature-line"></div>
+                <p class="signature-text">{{ issuer_name or "Instytucja" }}</p>
+            </div>
+        </div>
+
+        <div class="footer-decoration"></div>
+        <div class="certificate-number">{{ certificate_number or "CERT-001" }}</div>
+    </div>
 </body>
 </html>

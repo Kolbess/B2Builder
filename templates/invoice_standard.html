@@ -1,46 +1,219 @@
 ﻿<!DOCTYPE html>
-<html>
+<html lang="pl">
 <head>
-    <meta charset="utf-8" />
-    <title>{{ invoice_number or "Invoice" }}</title>
-    <style>{{ assets_css | default('', true) }}</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Faktura {{ invoice_number or "Nr" }}</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            padding: 20px;
+            background: #f8f9fa;
+        }
+
+        .invoice-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 2.5rem;
+            font-weight: 300;
+            margin-bottom: 5px;
+        }
+
+        .invoice-number {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .logo {
+            max-height: 100px;
+            max-width: 150px;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+        }
+
+        .section h2 {
+            font-size: 1.4rem;
+            color: #667eea;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .client-info {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+        }
+
+        .client-info p {
+            margin-bottom: 8px;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .items-table thead {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .items-table th,
+        .items-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .items-table th {
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+            letter-spacing: 0.5px;
+        }
+
+        .items-table tbody tr:hover {
+            background: #f8f9fa;
+        }
+
+        .items-table .quantity,
+        .items-table .unit-price,
+        .items-table .total-price {
+            text-align: right;
+        }
+
+        .summary {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 6px;
+            margin-top: 20px;
+            text-align: right;
+            border-left: 4px solid #667eea;
+        }
+
+        .summary h3 {
+            color: #667eea;
+            font-size: 1.3rem;
+        }
+
+        .footer {
+            background: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .items-table th,
+            .items-table td {
+                padding: 10px 5px;
+                font-size: 0.9rem;
+            }
+        }
+    </style>
 </head>
 <body>
-    {% if assets and assets.logo %}
-      <img src="{{ assets.logo }}" alt="logo" style="max-height:100px;" />
-    {% endif %}
+    <div class="invoice-container">
+        <div class="header">
+            <div class="header-content">
+                <h1>Faktura</h1>
+                <div class="invoice-number">Nr: {{ invoice_number or "FV/001/2026" }}</div>
+            </div>
+            {% if assets and assets.logo %}
+                <img src="{{ assets.logo }}" alt="Logo firmy" class="logo">
+            {% endif %}
+        </div>
 
-    <h1>Faktura: {{ invoice_number or "N/A" }}</h1>
+        <div class="content">
+            <div class="section">
+                <h2>Dane klienta</h2>
+                <div class="client-info">
+                    <p><strong>Nazwa:</strong> {{ customer.name if customer else "Nie podano" }}</p>
+                    <p><strong>Adres:</strong> {{ customer.address if customer else "Nie podano" }}</p>
+                </div>
+            </div>
 
-    <h2>Dane klienta</h2>
-    <p><strong>Nazwa:</strong> {{ customer.name if customer else "-" }}</p>
-    <p><strong>Adres:</strong> {{ customer.address if customer else "-" }}</p>
+            <div class="section">
+                <h2>Pozycje faktury</h2>
+                {% if items %}
+                    <table class="items-table">
+                        <thead>
+                            <tr>
+                                <th>Opis</th>
+                                <th class="quantity">Ilość</th>
+                                <th class="unit-price">Cena jedn.</th>
+                                <th class="total-price">Wartość</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for item in items %}
+                            <tr>
+                                <td>{{ item.description or "Brak opisu" }}</td>
+                                <td class="quantity">{{ item.quantity or 0 }}</td>
+                                <td class="unit-price">{{ "%.2f"|format(item.unit_price or 0) }} zł</td>
+                                <td class="total-price">{{ "%.2f"|format(item.total_price or 0) }} zł</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
 
-    <h2>Pozycje</h2>
-    {% if items %}
-      <table border="1" cellpadding="4" cellspacing="0" style="border-collapse: collapse; width: 100%;">
-        <thead>
-          <tr>
-            <th>Opis</th>
-            <th>Ilość</th>
-            <th>Cena jedn.</th>
-            <th>Razem</th>
-          </tr>
-        </thead>
-        <tbody>
-          {% for item in items %}
-          <tr>
-            <td>{{ item.description or "" }}</td>
-            <td>{{ item.quantity or "" }}</td>
-            <td>{{ item.unit_price or "" }}</td>
-            <td>{{ item.total_price or "" }}</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    {% else %}
-      <p>Brak pozycji.</p>
-    {% endif %}
+                    <div class="summary">
+                        <h3>Suma całkowita: {{ "%.2f"|format(items | sum(attribute='total_price') if items else 0) }} zł</h3>
+                    </div>
+                {% else %}
+                    <p>Brak pozycji na fakturze.</p>
+                {% endif %}
+            </div>
+        </div>
 
+        <div class="footer">
+            <p>Dziękujemy za skorzystanie z naszych usług | B2Builder</p>
+        </div>
+    </div>
 </body>
 </html>
