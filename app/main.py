@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from fastapi.staticfiles import StaticFiles
 from app.models import GenerateRequest, TemplateSchema, TemplatesResponse
 
 app = FastAPI(
@@ -6,15 +7,18 @@ app = FastAPI(
     description="SaaS API for PDF generation"
 )
 
+# Mount static files
+app.mount("/static", StaticFiles(directory="static"), name="static")
+
 @app.get("/health")
 def health_check():
     return {"status": "ok"}
 
 @app.get("/", include_in_schema=False)
-def root_redirect():
-    """Convenience route: redirect the browser to the interactive docs."""
-    from fastapi.responses import RedirectResponse
-    return RedirectResponse(url="/docs")
+def root():
+    """Serve the main web interface."""
+    from fastapi.responses import FileResponse
+    return FileResponse("static/index.html")
 
 from fastapi import Depends
 from fastapi.responses import StreamingResponse

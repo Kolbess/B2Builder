@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>B2Builder - Generator Dokumentów PDF</title>
+    <link rel="stylesheet" href="/static/css/styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-file-pdf"></i>
+                    <h1>B2Builder</h1>
+                </div>
+                <p class="subtitle">Profesjonalny generator dokumentów PDF</p>
+            </div>
+        </header>
+
+        <nav class="nav">
+            <div class="nav-left">
+                <div class="api-key-section">
+                    <label for="api-key">API Key:</label>
+                    <input type="password" id="api-key" placeholder="Wprowadź API key" value="test-key">
+                </div>
+            </div>
+            <div class="nav-center">
+                <button class="nav-btn active" onclick="showTemplate('invoice')">Faktura</button>
+                <button class="nav-btn" onclick="showTemplate('certificate')">Certyfikat</button>
+                <button class="nav-btn" onclick="showTemplate('report')">Raport</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <!-- Faktura Template -->
+            <div id="invoice-template" class="template active">
+                <div class="template-header">
+                    <h2><i class="fas fa-file-invoice-dollar"></i> Standardowa Faktura</h2>
+                    <p>Wygeneruj profesjonalną fakturę z pozycjami i danymi klienta</p>
+                </div>
+
+                <form id="invoice-form" class="form">
+                    <div class="form-section">
+                        <h3>Dane faktury</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="invoice-number">Numer faktury</label>
+                                <input type="text" id="invoice-number" placeholder="FV/001/2026" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Dane klienta</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="customer-name">Nazwa klienta</label>
+                                <input type="text" id="customer-name" placeholder="ABC Sp. z o.o." required>
+                            </div>
+                            <div class="form-group">
+                                <label for="customer-address">Adres</label>
+                                <input type="text" id="customer-address" placeholder="ul. Przykładowa 1, 00-000 Warszawa" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Pozycje faktury</h3>
+                        <div id="items-container">
+                            <div class="item-row">
+                                <div class="form-row">
+                                    <div class="form-group large">
+                                        <label>Opis</label>
+                                        <input type="text" class="item-description" placeholder="Usługa/produkt" required>
+                                    </div>
+                                    <div class="form-group small">
+                                        <label>Ilość</label>
+                                        <input type="number" class="item-quantity" placeholder="1" min="1" required>
+                                    </div>
+                                    <div class="form-group small">
+                                        <label>Cena jedn.</label>
+                                        <input type="number" class="item-price" placeholder="100.00" step="0.01" min="0" required>
+                                    </div>
+                                    <div class="form-group small">
+                                        <label>Wartość</label>
+                                        <input type="number" class="item-total" placeholder="100.00" step="0.01" readonly>
+                                    </div>
+                                    <div class="form-group action">
+                                        <button type="button" class="btn-remove" onclick="removeItem(this)">
+                                            <i class="fas fa-trash"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button type="button" class="btn-add" onclick="addItem()">
+                            <i class="fas fa-plus"></i> Dodaj pozycję
+                        </button>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-generate">
+                            <i class="fas fa-file-pdf"></i> Generuj PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Certyfikat Template -->
+            <div id="certificate-template" class="template">
+                <div class="template-header">
+                    <h2><i class="fas fa-certificate"></i> Certyfikat</h2>
+                    <p>Wygeneruj elegancki certyfikat ukończenia kursu</p>
+                </div>
+
+                <form id="certificate-form" class="form">
+                    <div class="form-section">
+                        <h3>Dane certyfikatu</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="recipient-name">Imię i nazwisko odbiorcy</label>
+                                <input type="text" id="recipient-name" placeholder="Jan Kowalski" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="course-title">Tytuł kursu</label>
+                                <input type="text" id="course-title" placeholder="Python dla Zaawansowanych" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="completion-date">Data ukończenia</label>
+                                <input type="date" id="completion-date" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="issuer-name">Nazwa instytucji</label>
+                                <input type="text" id="issuer-name" placeholder="B2Builder Academy" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="certificate-number">Numer certyfikatu</label>
+                                <input type="text" id="certificate-number" placeholder="CERT-2026-001" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-generate">
+                            <i class="fas fa-file-pdf"></i> Generuj PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Raport Template -->
+            <div id="report-template" class="template">
+                <div class="template-header">
+                    <h2><i class="fas fa-chart-line"></i> Raport Miesięczny</h2>
+                    <p>Wygeneruj profesjonalny raport biznesowy</p>
+                </div>
+
+                <form id="report-form" class="form">
+                    <div class="form-section">
+                        <h3>Dane raportu</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="report-title">Tytuł raportu</label>
+                                <input type="text" id="report-title" placeholder="Raport Miesięczny - Marzec 2026" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="report-month">Miesiąc</label>
+                                <input type="text" id="report-month" placeholder="2026-03" required>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group full">
+                                <label for="summary">Podsumowanie</label>
+                                <textarea id="summary" rows="3" placeholder="Krótkie podsumowanie wyników..." required></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-section">
+                        <h3>Wskaźniki finansowe</h3>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="revenue">Przychody</label>
+                                <input type="number" id="revenue" placeholder="15000.00" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="expenses">Wydatki</label>
+                                <input type="number" id="expenses" placeholder="12000.00" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="profit">Zysk</label>
+                                <input type="number" id="profit" placeholder="3000.00" step="0.01" min="0" required>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-generate">
+                            <i class="fas fa-file-pdf"></i> Generuj PDF
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+
+        <footer class="footer">
+            <p>&copy; 2026 B2Builder. Profesjonalne generowanie dokumentów PDF.</p>
+        </footer>
+    </div>
+
+    <script src="/static/js/app.js"></script>
+</body>
+</html>
